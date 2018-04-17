@@ -35,6 +35,31 @@ MongoClient.connect('mongodb://localhost:27017', function(err, client){
     });
   });
 
+  server.get('/api/foods', function(req, res){
+    const foodsCollection = db.collection('favouriteFoods');
+    foodsCollection.find().toArray(function(err, allFoods){
+      if(err){
+        console.log(err);
+        res.status(500);
+        res.send();
+      }
+      res.json(allFoods);
+    });
+  });
+
+  server.delete('/api/foods', function(req, res){
+    const foodsCollection = db.collection('favouriteFoods');
+    const filterObject = {};
+    foodsCollection.deleteMany(filterObject, function(err, result){
+      if(err){
+        res.status(500);
+        res.send();
+      }
+      res.status(204);
+      res.send();
+    });
+  });
+
 
   server.listen(3000, function(){
     console.log("Listening on port 3000");
