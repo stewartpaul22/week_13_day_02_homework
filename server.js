@@ -7,7 +7,7 @@ server.use(express.static('client/build'));
 server.use(parser.urlencoded({extended: true}));
 
 const MongoClient = require('mongodb').MongoClient;
-
+const ObjectID = require('mongodb').ObjectID;
 
 MongoClient.connect('mongodb://localhost:27017', function(err, client){
   if(err){
@@ -52,6 +52,23 @@ MongoClient.connect('mongodb://localhost:27017', function(err, client){
     const filterObject = {};
     foodsCollection.deleteMany(filterObject, function(err, result){
       if(err){
+        res.status(500);
+        res.send();
+      }
+      res.status(204);
+      res.send();
+    });
+  });
+
+  server.put('/api/foods/:id', function(req, res){
+    const foodsCollection = db.collection('favouriteFoods');
+    const objectID = ObjectID(req.params.id);
+    const filterObject = {_id: objectID};
+    const updatedData = req.body;
+    
+    foodsCollection.update(filterObject, updatedData, function(err, result){
+      if(err){
+        console.log(err);
         res.status(500);
         res.send();
       }
